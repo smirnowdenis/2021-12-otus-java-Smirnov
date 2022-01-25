@@ -9,10 +9,10 @@ public class CustomerReverseOrder {
     //todo: 2. надо реализовать методы этого класса
 
     public void add(Customer customer) {
-        deque.addLast(customer);
+        deque.push(customer);
     }
 
     public Object take() {
-        return deque.pollLast();
+        return deque.pop();
     }
 }
