@@ -33,7 +33,7 @@ public class TestClass {
         if (a + b == 15) {
             System.out.println("   Sum equals 15");
         } else {
-            throw new IllegalStateException("Bad result");
+            throw new IllegalArgumentException("Bad result");
         }
     }
 
@@ -45,7 +45,7 @@ public class TestClass {
         if (a + b == 200) {
             System.out.println("Sum equals 200");
         } else {
-            throw new IllegalStateException("Bad result");
+            throw new IllegalArgumentException("Bad result");
         }
     }
 

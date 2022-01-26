@@ -7,16 +7,12 @@ import ru.otus.homework.annotations.Test;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
-public final class Runner {
+public class Runner {
 
     private Runner() {
     }
 
-    public static void main(String[] args) {
-        run(TestClass.class);
-    }
-
-    private static void run(Class<?> testClass) {
+    private void run(Class<?> testClass) {
         System.out.println("----- Running the test from " + testClass + "\n");
         try {
             Method[] testClassMethods = testClass.getMethods();
@@ -51,7 +47,7 @@ public final class Runner {
         }
     }
 
-    private static void runMethodsWithAnnotationBefore(Object object, Method[] methods) throws Exception {
+    private void runMethodsWithAnnotationBefore(Object object, Method[] methods) throws Exception {
         System.out.println("*** Running the methods annotated Before");
         for (Method method : methods) {
             if (method.isAnnotationPresent(Before.class)) {
@@ -61,7 +57,7 @@ public final class Runner {
         System.out.println("*** Methods with annotation Before ended");
     }
 
-    private static void runMethodsWithAnnotationAfter(Object object, Method[] methods) throws Exception {
+    private void runMethodsWithAnnotationAfter(Object object, Method[] methods) throws Exception {
         System.out.println("*** Running the methods annotated After");
         for (Method method : methods) {
             if (method.isAnnotationPresent(After.class)) {
