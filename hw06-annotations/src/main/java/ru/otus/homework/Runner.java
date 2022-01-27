@@ -4,38 +4,50 @@ import ru.otus.homework.annotations.After;
 import ru.otus.homework.annotations.Before;
 import ru.otus.homework.annotations.Test;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 public class Runner {
-
-    private Runner() {
-    }
 
     private void run(Class<?> testClass) {
         System.out.println("----- Running the test from " + testClass + "\n");
         try {
-            Method[] testClassMethods = testClass.getMethods();
+            Method[] allMethods = testClass.getMethods();
 
             Constructor<?> constructor = testClass.getConstructor();
 
             var testCount = 0;
             var failedTestCount = 0;
 
-            for (Method method : testClassMethods) {
-                if (method.isAnnotationPresent(Test.class)) {
-                    testCount++;
-                    Object object = constructor.newInstance();
-                    try {
-                        runMethodsWithAnnotationBefore(object, testClassMethods);
-                        System.out.println("   Testing method: " + method.getName());
-                        method.invoke(object);
-                        runMethodsWithAnnotationAfter(object, testClassMethods);
-                    } catch (Exception e) {
-                        failedTestCount++;
-                        System.out.println("*** Test failed, method: " + method.getName() +
-                                "\n*** Fail exception: " + e + "\n");
-                    }
+            Method[] setUpMethods = getMethodsWithAnnotation(allMethods, Before.class);
+            Method[] testMethods = getMethodsWithAnnotation(allMethods, Test.class);
+            Method[] tearDownMethods = getMethodsWithAnnotation(allMethods, After.class);
+
+            for (Method method : testMethods) {
+                boolean isMethodFail = false;
+                testCount++;
+                Object object = constructor.newInstance();
+                try {
+                    runHelpMethods(object, setUpMethods);
+                    System.out.println("   Testing method: " + method.getName());
+                    method.invoke(object);
+                } catch (Exception e) {
+                    isMethodFail = true;
+                    System.out.println("*** Test failed, method: " + method.getName() +
+                            "\n*** Fail exception: " + e + "\n");
+                }
+
+                try {
+                    runHelpMethods(object, tearDownMethods);
+                } catch (Exception e) {
+                    isMethodFail = true;
+                    System.out.println("Failed when executing methods with annotation After");
+                }
+
+                if (isMethodFail) {
+                    failedTestCount++;
                 }
             }
 
@@ -47,23 +59,25 @@ public class Runner {
         }
     }
 
-    private void runMethodsWithAnnotationBefore(Object object, Method[] methods) throws Exception {
-        System.out.println("*** Running the methods annotated Before");
+    private void runHelpMethods(Object object, Method[] methods) throws Exception {
         for (Method method : methods) {
-            if (method.isAnnotationPresent(Before.class)) {
-                method.invoke(object);
-            }
+            System.out.println("*** Running the methods annotated " + getAnnotationName(method));
+            method.invoke(object);
+            System.out.println("*** Methods with annotation " + getAnnotationName(method) + " ended");
         }
-        System.out.println("*** Methods with annotation Before ended");
     }
 
-    private void runMethodsWithAnnotationAfter(Object object, Method[] methods) throws Exception {
-        System.out.println("*** Running the methods annotated After");
-        for (Method method : methods) {
-            if (method.isAnnotationPresent(After.class)) {
-                method.invoke(object);
-            }
+    private Method[] getMethodsWithAnnotation(Method[] methods, Class<? extends Annotation> annotationClass) {
+        return Arrays.stream(methods)
+                .filter(method -> method.isAnnotationPresent(annotationClass))
+                .toArray(Method[]::new);
+    }
+
+    private String getAnnotationName(Method method) {
+        if (method.isAnnotationPresent(Before.class)) {
+            return "Before";
+        } else {
+            return "After";
         }
-        System.out.println("*** Methods with annotation After ended\n");
     }
 }
