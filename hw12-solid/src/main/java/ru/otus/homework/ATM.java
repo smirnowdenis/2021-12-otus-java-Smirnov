@@ -1,6 +1,7 @@
 package ru.otus.homework;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface ATM {
     void putBanknote(Banknote banknote);
@@ -11,5 +12,5 @@ public interface ATM {
 
     int getBalance();
 
-    ArrayList<Banknote> getSum(long sum);
+    List<Banknote> getSum(long sum);
 }

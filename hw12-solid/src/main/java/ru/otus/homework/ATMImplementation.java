@@ -4,7 +4,7 @@ import java.util.*;
 
 public class ATMImplementation implements ATM {
 
-    private final Map<Banknote.Nominal, BanknoteCell> cells = new HashMap<>();
+    private final Map<Banknote.Nominal, BanknoteCell> cells = new EnumMap<>(Banknote.Nominal.class);
 
     public ATMImplementation() {
         EnumSet.allOf(Banknote.Nominal.class)
@@ -35,7 +35,7 @@ public class ATMImplementation implements ATM {
     }
 
     @Override
-    public ArrayList<Banknote> getSum(long sum) {
+    public List<Banknote> getSum(long sum) {
         System.out.println("Запрос на получение суммы: " + sum);
         if (sum > getBalance()) {
             throw new RuntimeException("Сумму " + sum + " выдать нельзя");
