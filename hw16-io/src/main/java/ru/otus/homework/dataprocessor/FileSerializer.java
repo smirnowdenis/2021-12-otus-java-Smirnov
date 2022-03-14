@@ -23,7 +23,7 @@ public class FileSerializer implements Serializer {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             writer.write(gson.toJson(data));
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            throw new FileProcessException(e);
         }
     }
 }
