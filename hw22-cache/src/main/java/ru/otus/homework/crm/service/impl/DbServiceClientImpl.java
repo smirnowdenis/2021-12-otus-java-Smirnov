@@ -1,5 +1,6 @@
 package ru.otus.homework.crm.service.impl;
 
+import com.sun.jdi.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.otus.homework.cache.HwCache;
@@ -15,11 +16,11 @@ public class DbServiceClientImpl implements DBServiceClient {
     private static final Logger log = LoggerFactory.getLogger(DbServiceClientImpl.class);
     private final DataTemplate<Client> dataTemplate;
     private final TransactionRunner transactionRunner;
-    private final HwCache<Long, Client> clientHwCache;
+    private final HwCache<String, Client> clientHwCache;
 
     public DbServiceClientImpl(TransactionRunner transactionRunner,
                                DataTemplate<Client> dataTemplate,
-                               HwCache<Long, Client> clientHwCache) {
+                               HwCache<String, Client> clientHwCache) {
         this.transactionRunner = transactionRunner;
         this.dataTemplate = dataTemplate;
         this.clientHwCache = clientHwCache;
@@ -44,7 +45,7 @@ public class DbServiceClientImpl implements DBServiceClient {
 
     @Override
     public Optional<Client> getClient(long id) {
-        Client clientFromCache = clientHwCache.get(id);
+        Client clientFromCache = clientHwCache.get(String.valueOf(id));
         if (clientFromCache != null) {
             return Optional.of(clientFromCache);
         }
@@ -73,6 +74,6 @@ public class DbServiceClientImpl implements DBServiceClient {
     }
 
     private void putToCache(Client client) {
-        clientHwCache.put(Long.valueOf(client.getId()), client);
+        clientHwCache.put(String.valueOf(client.getId()), client);
     }
 }

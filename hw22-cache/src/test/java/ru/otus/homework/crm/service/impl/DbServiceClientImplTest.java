@@ -33,7 +33,7 @@ class DbServiceClientImplTest {
 
     private static DataSource dataSource;
     private DBServiceClient dbServiceClient;
-    private HwCache<Long, Client> clientHwCache;
+    private HwCache<String, Client> clientHwCache;
 
     @BeforeAll
     static void setUp() {
@@ -62,9 +62,9 @@ class DbServiceClientImplTest {
         setUpDbService(null);
 
         Client secondClient = new Client("second");
-        clientHwCache.put(1L, new Client("first"));
-        clientHwCache.put(2L, secondClient);
-        clientHwCache.put(3L, new Client("third"));
+        clientHwCache.put("1", new Client("first"));
+        clientHwCache.put("2", secondClient);
+        clientHwCache.put("3", new Client("third"));
 
         assertThat(clientHwCache.size()).isEqualTo(3);
         assertThat(dbServiceClient.getClient(2)).hasValue(secondClient);

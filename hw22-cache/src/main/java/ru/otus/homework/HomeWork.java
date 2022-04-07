@@ -32,8 +32,8 @@ public class HomeWork {
         EntityClassMetaData<Client> entityClassMetaDataClient = new EntityClassMetaDataImpl<>(Client.class);
         var dataTemplateClient = new DataTemplateJdbc<>(dbExecutor, entityClassMetaDataClient); //реализация DataTemplate, универсальная
 
-        MyCache<Long, Client> myCache = new MyCache<>();
-        HwListener<Long, Client> listener =
+        MyCache<String, Client> myCache = new MyCache<>();
+        HwListener<String, Client> listener =
                 (key, value, action) -> log.info("key:{}, value:{}, action: {}", key, value, action);
         myCache.addListener(listener);
 
