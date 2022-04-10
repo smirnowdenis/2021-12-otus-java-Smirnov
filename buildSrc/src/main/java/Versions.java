@@ -2,4 +2,5 @@ public interface Versions {
     String guava = "31.0.1-jre";
     String testcontainers = "1.15.3";
     String awaitility = "3.0.0";
+    String jetty = "11.0.7";
 }
