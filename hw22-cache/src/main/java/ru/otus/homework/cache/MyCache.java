@@ -3,10 +3,7 @@ package ru.otus.homework.cache;
 import ru.otus.homework.cache.action.CacheAction;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.*;
 
 public class MyCache<K, V> implements HwCache<K, V> {
     private final Map<K, V> cache = new WeakHashMap<>();
@@ -47,17 +44,16 @@ public class MyCache<K, V> implements HwCache<K, V> {
 
     @Override
     public void removeListener(HwListener<K, V> listener) {
-        listeners.removeIf(hwListenerWeakReference -> {
-            HwListener<K, V> listenerFromList = hwListenerWeakReference.get();
-            return listenerFromList != null && listenerFromList.equals(listener);
-        });
+        listeners.removeIf(hwListenerWeakReference -> Objects.equals(hwListenerWeakReference.get(), listener));
     }
 
     private void notifyListeners(K key, V value, CacheAction action) {
         listeners.forEach(hwListenerWeakReference -> {
-            HwListener<K, V> listener = hwListenerWeakReference.get();
-            if (listener != null) {
-                listener.notify(key, value, action.toString());
+            try {
+                Objects.requireNonNull(hwListenerWeakReference.get())
+                        .notify(key, value, action.toString());
+            } catch (Exception e) {
+                throw new IllegalArgumentException("No such listener", e);
             }
         });
 

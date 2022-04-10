@@ -45,9 +45,9 @@ public class DbServiceClientImpl implements DBServiceClient {
 
     @Override
     public Optional<Client> getClient(long id) {
-        Client clientFromCache = clientHwCache.get(String.valueOf(id));
-        if (clientFromCache != null) {
-            return Optional.of(clientFromCache);
+        Optional<Client> clientFromCache = Optional.ofNullable(clientHwCache.get(Long.toString(id)));
+        if (clientFromCache.isPresent()) {
+            return clientFromCache;
         }
 
         Optional<Client> clientFromDb = transactionRunner.doInTransaction(connection -> {
@@ -74,6 +74,6 @@ public class DbServiceClientImpl implements DBServiceClient {
     }
 
     private void putToCache(Client client) {
-        clientHwCache.put(String.valueOf(client.getId()), client);
+        clientHwCache.put(Long.toString(client.getId()), client);
     }
 }
