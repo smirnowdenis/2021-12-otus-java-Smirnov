@@ -5,8 +5,8 @@ import com.google.gson.annotations.Expose;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "admin")
-public class Admin implements Cloneable {
+@Table(name = "users")
+public class User implements Cloneable {
     @Expose
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,13 +21,18 @@ public class Admin implements Cloneable {
     @Column(name = "password")
     private String password;
 
-    public Admin() {
+    @Expose
+    @Column(name = "role")
+    private String role;
+
+    public User() {
     }
 
-    public Admin(Long id, String login, String password) {
+    public User(Long id, String login, String password, String role) {
         this.id = id;
         this.login = login;
         this.password = password;
+        this.role = role;
     }
 
     public Long getId() {
@@ -54,8 +59,16 @@ public class Admin implements Cloneable {
         this.password = password;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     @Override
-    public Admin clone() {
-        return new Admin(this.id, this.login, this.password);
+    public User clone() {
+        return new User(this.id, this.login, this.password, this.role);
     }
 }

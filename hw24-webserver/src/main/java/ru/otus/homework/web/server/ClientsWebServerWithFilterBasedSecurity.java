@@ -6,7 +6,7 @@ import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import ru.otus.homework.crm.service.api.DBServiceClient;
-import ru.otus.homework.web.service.AdminAuthService;
+import ru.otus.homework.web.service.UserAuthService;
 import ru.otus.homework.web.service.TemplateProcessor;
 import ru.otus.homework.web.servlet.AuthorizationFilter;
 import ru.otus.homework.web.servlet.LoginServlet;
@@ -14,10 +14,10 @@ import ru.otus.homework.web.servlet.LoginServlet;
 import java.util.Arrays;
 
 public class ClientsWebServerWithFilterBasedSecurity extends ClientsWebServerSimple {
-    private final AdminAuthService adminAuthService;
+    private final UserAuthService adminAuthService;
 
     public ClientsWebServerWithFilterBasedSecurity(int port,
-                                                   AdminAuthService adminAuthService,
+                                                   UserAuthService adminAuthService,
                                                    DBServiceClient dbServiceClient,
                                                    Gson gson,
                                                    TemplateProcessor templateProcessor) {

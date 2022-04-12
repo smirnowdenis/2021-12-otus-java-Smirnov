@@ -1,5 +1,5 @@
 package ru.otus.homework.web.service;
 
-public interface AdminAuthService {
+public interface UserAuthService {
     boolean authenticate(String login, String password);
 }

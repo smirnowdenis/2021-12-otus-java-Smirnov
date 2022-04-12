@@ -10,6 +10,8 @@ public interface DataTemplate<T> {
 
     List<T> findByEntityField(Session session, String entityFieldName, Object entityFieldValue);
 
+    List<T> findAdminByLogin(Session session, String login);
+
     List<T> findAll(Session session);
 
     void insert(Session session, T object);

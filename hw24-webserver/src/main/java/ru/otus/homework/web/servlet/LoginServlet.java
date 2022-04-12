@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import ru.otus.homework.web.service.AdminAuthService;
+import ru.otus.homework.web.service.UserAuthService;
 import ru.otus.homework.web.service.TemplateProcessor;
 
 import java.io.IOException;
@@ -19,10 +19,10 @@ public class LoginServlet extends HttpServlet {
     private static final String LOGIN_PAGE_TEMPLATE = "login.html";
 
     private final TemplateProcessor templateProcessor;
-    private final AdminAuthService adminAuthService;
+    private final UserAuthService userAuthService;
 
-    public LoginServlet(TemplateProcessor templateProcessor, AdminAuthService adminAuthService) {
-        this.adminAuthService = adminAuthService;
+    public LoginServlet(TemplateProcessor templateProcessor, UserAuthService userAuthService) {
+        this.userAuthService = userAuthService;
         this.templateProcessor = templateProcessor;
     }
 
@@ -38,7 +38,7 @@ public class LoginServlet extends HttpServlet {
         String name = request.getParameter(PARAM_LOGIN);
         String password = request.getParameter(PARAM_PASSWORD);
 
-        if (adminAuthService.authenticate(name, password)) {
+        if (userAuthService.authenticate(name, password)) {
             HttpSession session = request.getSession();
             session.setMaxInactiveInterval(MAX_INACTIVE_INTERVAL);
             response.sendRedirect("/clients");

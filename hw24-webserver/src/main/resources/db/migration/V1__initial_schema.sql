@@ -1,7 +1,7 @@
 drop table if exists client;
 drop table if exists address;
 drop table if exists phone;
-drop table if exists admin;
+drop table if exists users;
 
 create table client
 (
@@ -29,13 +29,11 @@ alter table client
         foreign key (address_id)
             references address (id);
 
-create table admin
+create table users
 (
     id       bigserial not null primary key,
     login    varchar(50) unique,
-    password varchar(50)
+    password varchar(50),
+    role varchar(20)
 );
-
-insert into admin(login, password)
-values ('admin', 'admin')
 

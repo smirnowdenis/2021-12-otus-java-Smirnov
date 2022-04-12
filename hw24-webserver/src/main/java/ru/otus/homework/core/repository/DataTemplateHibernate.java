@@ -2,6 +2,10 @@ package ru.otus.homework.core.repository;
 
 import org.hibernate.Session;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +30,22 @@ public class DataTemplateHibernate<T> implements DataTemplate<T> {
                 .where(criteriaBuilder.equal(root.get(entityFieldName), entityFieldValue));
 
         var query = session.createQuery(criteriaQuery);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<T> findAdminByLogin(Session session, String login) {
+        var criteriaBuilder = session.getCriteriaBuilder();
+        var criteriaQuery = criteriaBuilder.createQuery(clazz);
+        var root = criteriaQuery.from(clazz);
+        var predicateForLogin = criteriaBuilder.equal(root.get("login"), login);
+        var predicateForRole = criteriaBuilder.equal(root.get("role"), "admin");
+
+        criteriaQuery.select(root)
+                .where(criteriaBuilder.and(predicateForLogin, predicateForRole));
+
+        var query = session.createQuery(criteriaQuery);
+
         return query.getResultList();
     }
 

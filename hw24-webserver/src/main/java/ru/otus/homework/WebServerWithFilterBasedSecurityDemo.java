@@ -8,15 +8,15 @@ import ru.otus.homework.core.repository.HibernateUtils;
 import ru.otus.homework.core.sessionmanager.TransactionManagerHibernate;
 import ru.otus.homework.crm.dbmigrations.MigrationsExecutorFlyway;
 import ru.otus.homework.crm.model.Address;
-import ru.otus.homework.crm.model.Admin;
+import ru.otus.homework.crm.model.User;
 import ru.otus.homework.crm.model.Client;
 import ru.otus.homework.crm.model.Phone;
-import ru.otus.homework.crm.service.impl.DBServiceAdminImpl;
+import ru.otus.homework.crm.service.impl.DBServiceUserImpl;
 import ru.otus.homework.crm.service.impl.DbServiceClientImpl;
 import ru.otus.homework.web.server.ClientsWebServer;
 import ru.otus.homework.web.server.ClientsWebServerWithFilterBasedSecurity;
-import ru.otus.homework.web.service.AdminAuthService;
-import ru.otus.homework.web.service.AdminAuthServiceImpl;
+import ru.otus.homework.web.service.UserAuthService;
+import ru.otus.homework.web.service.UserAuthServiceImpl;
 import ru.otus.homework.web.service.TemplateProcessor;
 import ru.otus.homework.web.service.TemplateProcessorImpl;
 
@@ -35,17 +35,17 @@ public class WebServerWithFilterBasedSecurityDemo {
         new MigrationsExecutorFlyway(dbUrl, dbUserName, dbPassword).executeMigrations();
 
         var sessionFactory = HibernateUtils.buildSessionFactory(configuration,
-                Client.class, Address.class, Phone.class, Admin.class);
+                Client.class, Address.class, Phone.class, User.class);
 
         var transactionManager = new TransactionManagerHibernate(sessionFactory);
 
-        var dbServiceAdmin = new DBServiceAdminImpl(new DataTemplateHibernate<>(Admin.class), transactionManager);
+        var dbServiceUser = new DBServiceUserImpl(new DataTemplateHibernate<>(User.class), transactionManager);
         var dbServiceClient = new DbServiceClientImpl(new DataTemplateHibernate<>(Client.class), transactionManager);
 
 
         Gson gson = new GsonBuilder().serializeNulls().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().create();
         TemplateProcessor templateProcessor = new TemplateProcessorImpl(TEMPLATES_DIR);
-        AdminAuthService authService = new AdminAuthServiceImpl(dbServiceAdmin);
+        UserAuthService authService = new UserAuthServiceImpl(dbServiceUser);
 
         ClientsWebServer clientsWebServer = new ClientsWebServerWithFilterBasedSecurity(WEB_SERVER_PORT,
                 authService, dbServiceClient, gson, templateProcessor);
