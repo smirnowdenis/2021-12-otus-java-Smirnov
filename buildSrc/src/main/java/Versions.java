@@ -3,4 +3,5 @@ public interface Versions {
     String testcontainers = "1.15.3";
     String awaitility = "3.0.0";
     String jetty = "11.0.7";
+    String reflections = "0.10.2";
 }
