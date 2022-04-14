@@ -10,7 +10,6 @@ import ru.otus.homework.exception.IncorrectConfigException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class AppComponentsContainerImpl implements AppComponentsContainer {
 
@@ -58,7 +57,8 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
         checkConfigClass(configClass);
         List<Method> methodsWithAppComponentAnnotation = Arrays.stream(configClass.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(AppComponent.class))
-                .collect(Collectors.toList());
+                .sorted(Comparator.comparingInt(method -> method.getAnnotation(AppComponent.class).order()))
+                .toList();
 
         if (!methodsWithAppComponentAnnotation.isEmpty()) {
             processConfigMethods(configClass, methodsWithAppComponentAnnotation);
@@ -68,8 +68,7 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
     private void processConfigMethods(Class<?> configClass, List<Method> methodsWithAppComponentAnnotation) {
         try {
             Object config = configClass.getDeclaredConstructor().newInstance();
-            methodsWithAppComponentAnnotation.stream()
-                    .sorted(Comparator.comparingInt(method -> method.getAnnotation(AppComponent.class).order()))
+            methodsWithAppComponentAnnotation
                     .forEach(method -> invokeMethodAndPutComponentToContainer(config, method));
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             throw new IncorrectConfigException(
@@ -79,18 +78,19 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
 
     private void invokeMethodAndPutComponentToContainer(Object config, Method method) {
         try {
-            List<Object> methodArguments = new ArrayList<>();
+            Class<?>[] types = method.getParameterTypes();
+            Object[] methodArguments = new Object[types.length];
+            for (int i = 0; i < types.length; i++) {
+                methodArguments[i] = getAppComponent(types[i]);
+            }
 
-            Arrays.stream(method.getParameterTypes()).forEach(parameterType -> {
-                Object appComponent = getAppComponent(parameterType);
-                methodArguments.add(appComponent);
-            });
+            Object component = method.invoke(config, methodArguments);
+            String methodName = method.getAnnotation(AppComponent.class).name();
 
-            Object component = method.invoke(config, methodArguments.toArray());
-            Object previousValue = appComponentsByName.put(method.getAnnotation(AppComponent.class).name(), component);
-
-            appComponents.remove(previousValue);
-            appComponents.add(component);
+            if (!appComponentsByName.containsKey(methodName)) {
+                appComponents.add(component);
+                appComponentsByName.put(methodName, component);
+            }
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new IncorrectConfigException(
                     String.format("Cannot invoke config %s method  %s", config.getClass().getName(), method.getName()), e);
