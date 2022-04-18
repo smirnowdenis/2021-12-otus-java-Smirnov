@@ -87,10 +87,11 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
             Object component = method.invoke(config, methodArguments);
             String methodName = method.getAnnotation(AppComponent.class).name();
 
-            if (!appComponentsByName.containsKey(methodName)) {
-                appComponents.add(component);
-                appComponentsByName.put(methodName, component);
+            if (appComponentsByName.containsKey(methodName)) {
+                throw new IncorrectConfigException("You have duplicate configured beans", new IllegalArgumentException());
             }
+            appComponents.add(component);
+            appComponentsByName.put(methodName, component);
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new IncorrectConfigException(
                     String.format("Cannot invoke config %s method  %s", config.getClass().getName(), method.getName()), e);
