@@ -11,28 +11,26 @@ public class CounterDemo {
     public static void main(String[] args) {
         CounterDemo o = new CounterDemo();
 
-        new Thread(() -> o.action("first")).start();
-        new Thread(() -> o.action("second")).start();
+        new Thread(() -> o.action(new Counter(), "first")).start();
+        new Thread(() -> o.action(new Counter(), "second")).start();
     }
 
-    private synchronized void action(String flag) {
-        try {
-            while (flag.equals(previousFlag)) {
-                wait();
-            }
+    private synchronized void action(Counter counter, String flag) {
+        while (!Thread.currentThread().isInterrupted()) {
+            try {
+                while (flag.equals(previousFlag)) {
+                    wait();
+                }
 
-            previousFlag = flag;
-            Counter counter = new Counter();
+                previousFlag = flag;
 
-            while (!Thread.currentThread().isInterrupted()) {
                 logger.info(String.valueOf(counter.getNextValue()));
                 sleep();
                 notifyAll();
-                wait();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException(e);
             }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException(e);
         }
     }
 
