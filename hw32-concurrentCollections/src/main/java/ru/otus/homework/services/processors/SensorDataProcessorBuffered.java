@@ -15,7 +15,7 @@ public class SensorDataProcessorBuffered implements SensorDataProcessor {
 
     private final int bufferSize;
     private final SensorDataBufferedWriter writer;
-    private Set<SensorData> bufferedData;
+    private final Set<SensorData> bufferedData;
 
     public SensorDataProcessorBuffered(int bufferSize, SensorDataBufferedWriter writer) {
         this.bufferSize = bufferSize;
@@ -24,7 +24,7 @@ public class SensorDataProcessorBuffered implements SensorDataProcessor {
     }
 
     @Override
-    public void process(SensorData data) {
+    public synchronized void process(SensorData data) {
         bufferedData.add(data);
 
         if (bufferedData.size() >= bufferSize) {
