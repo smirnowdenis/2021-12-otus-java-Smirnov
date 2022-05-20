@@ -8,7 +8,7 @@ import ru.otus.homework.lib.SensorDataBufferedWriter;
 
 import java.util.Comparator;
 import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.TreeSet;
 
 public class SensorDataProcessorBuffered implements SensorDataProcessor {
     private static final Logger log = LoggerFactory.getLogger(SensorDataProcessorBuffered.class);
@@ -20,7 +20,7 @@ public class SensorDataProcessorBuffered implements SensorDataProcessor {
     public SensorDataProcessorBuffered(int bufferSize, SensorDataBufferedWriter writer) {
         this.bufferSize = bufferSize;
         this.writer = writer;
-        bufferedData = new ConcurrentSkipListSet<>(Comparator.comparing(SensorData::getMeasurementTime));
+        bufferedData = new TreeSet<>(Comparator.comparing(SensorData::getMeasurementTime));
     }
 
     @Override
